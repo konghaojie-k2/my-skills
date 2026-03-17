@@ -1,0 +1,60 @@
+# Python generated
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+build/
+dist/
+wheels/
+*.egg-info/
+*.egg
+MANIFEST
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+.env
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.claude/
+.cursor/
+
+# uv
+.python-version
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Node.js
+node_modules/
+skills-inventory/node_modules/
+
+# Tauri
+skills-inventory/target/
+skills-inventory/dist/
+skills-inventory/error.log
+skills-inventory/*.exe
+skills-inventory/*.dll
+skills-inventory/webview2*
+skills-inventory/webview2_*/
+skills-inventory/webview2.nuget/
+skills-inventory/webview2.zip
+skills-inventory/*.nuget
+skills-inventory/v2-*.exe
+skills-inventory/v3-*.exe
+skills-inventory/v4-*.exe
