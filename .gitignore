@@ -45,7 +45,7 @@ node_modules/
 skills-inventory/node_modules/
 
 # Tauri
-skills-inventory/target/
+skills-inventory/**/target/
 skills-inventory/dist/
 skills-inventory/error.log
 skills-inventory/*.exe
