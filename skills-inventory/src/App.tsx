@@ -153,6 +153,7 @@ function App() {
 
   // Delete modal state
   const [deleteModal, setDeleteModal] = useState<{ show: boolean; skillName: string }>({ show: false, skillName: "" });
+  const [deleteVersionModal, setDeleteVersionModal] = useState<{ show: boolean; skillName: string; version: string }>({ show: false, skillName: "", version: "" });
   const [deleting, setDeleting] = useState(false);
   const [deleteProgress, setDeleteProgress] = useState<string>("");
 
@@ -197,6 +198,54 @@ function App() {
       setDeleting(false);
       setDeleteProgress("");
       setDeleteModal({ show: false, skillName: "" });
+    }
+  };
+
+  const handleDeleteVersionConfirm = async () => {
+    const { skillName, version } = deleteVersionModal;
+    setDeleting(true);
+    setDeleteProgress("正在删除版本...");
+
+    try {
+      await invoke("delete_skill_version", { skillName, version });
+      setDeleteProgress("更新 Git 仓库...");
+      // 重新获取最新的 skills 列表
+      const latestSkills = await invoke<HubSkill[]>("get_hub_skills");
+      setHubSkills(latestSkills);
+
+      // 删除成功后刷新当前 skill 的详情
+      const updatedSkill = latestSkills.find(s => s.name === skillName);
+      if (updatedSkill) {
+        setSelectedSkill(updatedSkill);
+        const detail = await invoke<string | null>("get_skill_detail", {
+          path: `${hubConfig?.hub_path}/skills/${skillName}/${updatedSkill.current_version}`,
+        });
+        const rawContent = detail || "无详情内容";
+        const { meta, content } = parseFrontMatter(rawContent);
+        setSkillMeta(meta);
+        setSkillDetail(content);
+      }
+      showMessage("success", `已删除版本 ${version}`);
+    } catch (error) {
+      showMessage("error", `删除版本失败: ${error}`);
+      // 删除失败后重新加载当前 skill 的详情
+      const latestSkills = await invoke<HubSkill[]>("get_hub_skills");
+      setHubSkills(latestSkills);
+      const latestSkill = latestSkills.find(s => s.name === skillName);
+      if (latestSkill) {
+        setSelectedSkill(latestSkill);
+        const detail = await invoke<string | null>("get_skill_detail", {
+          path: `${hubConfig?.hub_path}/skills/${skillName}/${latestSkill.current_version}`,
+        });
+        const rawContent = detail || "无详情内容";
+        const { meta, content } = parseFrontMatter(rawContent);
+        setSkillMeta(meta);
+        setSkillDetail(content);
+      }
+    } finally {
+      setDeleting(false);
+      setDeleteProgress("");
+      setDeleteVersionModal({ show: false, skillName: "", version: "" });
     }
   };
 
@@ -742,10 +791,22 @@ function App() {
                         <div className="versions-list">
                           {selectedSkill.versions.map((v) => (
                             <div key={v.version} className="version-item">
-                              <span className="version-name">{v.version}</span>
-                              <span className="version-time">
-                                {new Date(v.timestamp * 1000).toLocaleString()}
-                              </span>
+                              <div className="version-info">
+                                <span className="version-name">
+                                  {v.version}
+                                  {v.version === selectedSkill.current_version && <span className="current-badge"> current</span>}
+                                </span>
+                                <span className="version-time">
+                                  {new Date(v.timestamp * 1000).toLocaleString()}
+                                </span>
+                              </div>
+                              <button
+                                className="version-delete-btn"
+                                onClick={() => setDeleteVersionModal({ show: true, skillName: selectedSkill.name, version: v.version })}
+                                title="删除此版本"
+                              >
+                                🗑️
+                              </button>
                             </div>
                           ))}
                         </div>
@@ -1132,6 +1193,43 @@ function App() {
               <button
                 className="btn btn-danger"
                 onClick={handleDeleteConfirm}
+                disabled={deleting}
+              >
+                {deleting ? "删除中..." : "确认删除"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Version Confirmation Modal */}
+      {deleteVersionModal.show && (
+        <div className="modal-overlay" onClick={() => !deleting && setDeleteVersionModal({ show: false, skillName: "", version: "" })}>
+          <div className="modal delete-modal" onClick={(e) => e.stopPropagation()}>
+            <h2>确认删除版本</h2>
+            <div className="modal-content">
+              <p className="delete-warning">
+                确定要删除 Skill "<strong>{deleteVersionModal.skillName}</strong>" 的版本 "<strong>{deleteVersionModal.version}</strong>" 吗？
+              </p>
+              <p className="delete-hint">此操作不可恢复！</p>
+              {deleting && (
+                <div className="delete-progress">
+                  <div className="spinner-small"></div>
+                  <span>{deleteProgress}</span>
+                </div>
+              )}
+            </div>
+            <div className="modal-actions">
+              <button
+                className="btn btn-secondary"
+                onClick={() => setDeleteVersionModal({ show: false, skillName: "", version: "" })}
+                disabled={deleting}
+              >
+                取消
+              </button>
+              <button
+                className="btn btn-danger"
+                onClick={handleDeleteVersionConfirm}
                 disabled={deleting}
               >
                 {deleting ? "删除中..." : "确认删除"}

@@ -564,6 +564,27 @@ async fn delete_skill(skill_name: String) -> Result<(), String> {
     }).await.map_err(|e| e.to_string())?
 }
 
+#[tauri::command]
+async fn delete_skill_version(skill_name: String, version: String) -> Result<(), String> {
+    tokio::task::spawn_blocking(move || {
+        let config = load_hub_config()?;
+        let hub_path = PathBuf::from(&config.hub_path);
+        let version_dir = hub_path.join("skills").join(&skill_name).join(&version);
+
+        if !version_dir.exists() {
+            return Err(format!("Version '{}' not found", version));
+        }
+
+        fs::remove_dir_all(&version_dir).map_err(|e| format!("删除版本失败: {}", e))?;
+
+        // Git operations are optional - user can commit manually
+        let _ = run_git(&hub_path, &["add", "-A"]);
+        let _ = run_git(&hub_path, &["commit", "-m", &format!("Delete version {} from skill {}", version, skill_name)]);
+
+        Ok(())
+    }).await.map_err(|e| e.to_string())?
+}
+
 // ============== Git Commands ==============
 
 #[tauri::command]
@@ -888,6 +909,7 @@ pub fn run() {
             get_skill_versions,
             rollback_skill,
             delete_skill,
+            delete_skill_version,
             git_pull,
             git_push,
             git_status,
