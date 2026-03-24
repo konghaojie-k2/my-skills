@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "skills-inventory",
+  "productName": "skills-hub",
   "version": "0.1.0",
-  "identifier": "com.skills.inventory",
+  "identifier": "com.skills.hub",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
@@ -13,9 +13,9 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "Skills 盘点器",
-        "width": 1000,
-        "height": 700,
+        "title": "Skills Hub",
+        "width": 1200,
+        "height": 800,
         "resizable": true,
         "fullscreen": false,
         "minWidth": 800,

@@ -58,3 +58,8 @@ skills-inventory/*.nuget
 skills-inventory/v2-*.exe
 skills-inventory/v3-*.exe
 skills-inventory/v4-*.exe
+
+# Planning files (local only)
+findings.md
+progress.md
+task_plan.md

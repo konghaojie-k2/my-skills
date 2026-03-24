@@ -1,12 +1,12 @@
 [package]
-name = "skills-inventory"
+name = "skills-hub"
 version = "0.1.0"
-description = "Skills Inventory - A desktop app to scan and manage Claude Code skills"
+description = "Skills Hub - A central hub for managing Claude Code skills with version control"
 authors = ["you"]
 edition = "2021"
 
 [lib]
-name = "skills_inventory_lib"
+name = "skills_hub_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
@@ -23,3 +23,5 @@ walkdir = "2"
 dirs = "5"
 zip = "2"
 base64 = "0.22"
+chrono = "0.4"
+tokio = { version = "1", features = ["full"] }

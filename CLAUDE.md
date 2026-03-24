@@ -5,28 +5,51 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project Overview
 
 - **Project Name**: my-skills
-- **Type**: Python Package
-- **Python Version**: 3.13+
-- **Package Manager**: uv
+- **Type**: Tauri Desktop Application (React + TypeScript)
+- **Purpose**: Skills inventory desktop app for managing Claude Code skills
+
+## Project Structure
+
+```
+my-skills/
+└── skills-inventory/           # Main application
+    ├── src/                    # React frontend (TypeScript)
+    ├── src-tauri/              # Tauri backend (Rust)
+    ├── icons/                  # App icons
+    └── dist/                   # Built application
+```
+
+## Tech Stack
+
+- **Frontend**: React 18 + TypeScript + Vite
+- **Backend**: Tauri 2.x (Rust)
+- **Package Manager**: npm
 
 ## Common Commands
 
 ```bash
-# Install dependencies and create virtual environment
-cd "C:/CODE/my-skills" && uv sync
+# Navigate to app directory
+cd "C:/CODE/my-skills/skills-inventory"
 
-# Run the main script
-cd "C:/CODE/my-skills" && uv run main.py
+# Install dependencies
+npm install
 
-# Add a new dependency
-cd "C:/CODE/my-skills" && uv add <package>
+# Run development server
+npm run dev
 
-# Run with specific Python version
-cd "C:/CODE/my-skills" && uv run --python 3.13 main.py
+# Build the application
+npm run build
+
+# Run Tauri dev (full app with backend)
+npm run tauri dev
+
+# Build Tauri app for production
+npm run tauri build
 ```
 
 ## Development Notes
 
-- All Python files must include encoding declaration: `# -*- coding: utf-8 -*-`
-- Uses 清华镜像源 (Tsinghua Mirror) for pip packages in `pyproject.toml`
-- Virtual environment: `.venv/`
+- TypeScript strict mode enabled
+- React 18 with hooks
+- Tauri 2.x uses @tauri-apps/api v2
+- App icons generated from SVG in icons/ directory
